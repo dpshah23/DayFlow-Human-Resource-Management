@@ -37,14 +37,14 @@ model User {
 }
 
 model Profile {
-  id      String  @id @default(cuid())
-  userId  String  @unique
-  employeeId String @unique
-  name    String
-  phone   String?
-  address String?
-  salary  Int?
-  user    User    @relation(fields: [userId], references: [id])
+  id         String  @id @default(cuid())
+  userId     String  @unique
+  employeeId String  @unique
+  name       String
+  phone      String?
+  address    String?
+  salary     Int?
+  user       User    @relation(fields: [userId], references: [id])
 }
 
 model Attendance {
@@ -53,18 +53,26 @@ model Attendance {
   date   DateTime
   status AttendanceStatus
   user   User             @relation(fields: [userId], references: [id])
+
   @@unique([userId, date], name: "userId_date")
 }
 
 model Leave {
-  id     String      @id @default(cuid())
+  id     String @id @default(cuid())
   userId String
-  type   LeaveType
-  from   DateTime
-  to     DateTime
-  status LeaveStatus @default(PENDING)
-  reason String?
-  user   User        @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  leaveType LeaveType 
+  startDate DateTime
+  endDate   DateTime
+  reason    String
+  status    LeaveStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([status])
+  @@index([startDate])
 }
 
 enum Role {

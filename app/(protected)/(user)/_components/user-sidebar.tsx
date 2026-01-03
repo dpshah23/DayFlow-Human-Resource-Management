@@ -1,11 +1,11 @@
-// File: components/layouts/user-sidebar.tsx
+// File: app/(protected)/(user)/_components/user-sidebar.tsx
 "use client";
 
 import { Button } from "@heroui/button";
 import { Card } from "@heroui/card";
 import { Avatar } from "@heroui/avatar";
 import { Chip } from "@heroui/chip";
-import { User, Shield } from "lucide-react";
+import { User, Calendar } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -25,11 +25,16 @@ const navItems = [
     href: "/profile",
     icon: User,
   },
+  {
+    label: "My Leaves",
+    href: "/leaves",
+    icon: Calendar,
+  },
 ];
 
 export function UserSidebar({ user }: UserSidebarProps) {
   const pathname = usePathname();
-  const isActive = (href: string) => pathname === href;
+  const isActive = (href: string) => pathname.startsWith(href);
 
   return (
     <div className="sticky space-y-4 top-20">

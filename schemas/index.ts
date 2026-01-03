@@ -47,3 +47,34 @@ export const RegisterSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"], // Show the error on the confirmPassword field
   });
+
+export const ApplyLeaveSchema = z
+  .object({
+    leaveType: z.enum(["SICK", "CASUAL", "ANNUAL", "UNPAID"], {
+      required_error: "Leave type is required",
+    }),
+    startDate: z.any().refine((val) => val !== undefined && val !== null, {
+      message: "Start date is required",
+    }),
+    endDate: z.any().refine((val) => val !== undefined && val !== null, {
+      message: "End date is required",
+    }),
+    reason: z
+      .string()
+      .min(10, "Reason must be at least 10 characters")
+      .max(500),
+  })
+  .refine(
+    (data) => {
+      if (!data.startDate || !data.endDate) return true;
+      // Convert to Date objects for comparison
+      const start = new Date(data.startDate.toString());
+      const end = new Date(data.endDate.toString());
+
+      return end >= start;
+    },
+    {
+      message: "End date must be after or equal to start date",
+      path: ["endDate"],
+    },
+  ); // File: schemas/leave.ts
