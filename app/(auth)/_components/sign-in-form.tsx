@@ -94,6 +94,8 @@ export const SignInForm = ({ redirectTo }: { redirectTo?: string }) => {
           } else {
             if (result.data?.role === "ADMIN") {
               router.push("/admin/dashboard");
+            } else {
+              router.push("/profile");
             }
           }
           // router.refresh();

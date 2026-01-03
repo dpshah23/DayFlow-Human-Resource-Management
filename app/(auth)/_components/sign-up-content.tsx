@@ -1,6 +1,5 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { Skeleton } from "@heroui/skeleton";
 import { Card, CardHeader, CardBody, CardFooter } from "@heroui/card";
 
@@ -46,17 +45,17 @@ export const SignUpSkeleton = () => {
    Actual Page Content
 ---------------------------------*/
 export const SignUpContent = () => {
-  const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo");
+  // const searchParams = useSearchParams();
+  // const redirectTo = searchParams.get("redirectTo");
 
   return (
     <AuthWrapper
       footerContent={
         <AuthBackLink
           href={
-            redirectTo
-              ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`
-              : "/sign-in"
+            // redirectTo
+            // ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`
+            "/sign-in"
           }
           linkText="Sign in"
           text="Already have an account?"
@@ -66,7 +65,7 @@ export const SignUpContent = () => {
       title="Create Account"
     >
       <SignUpForm
-        redirectTo={redirectTo ? decodeURIComponent(redirectTo) : undefined}
+      // redirectTo={redirectTo ? decodeURIComponent(redirectTo) : undefined}
       />
     </AuthWrapper>
   );

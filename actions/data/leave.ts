@@ -12,6 +12,7 @@ import {
   findLeavesByUserId,
   findAllLeaves,
   UpdateLeaveData,
+  bulkDeleteLeaves,
 } from "@/lib/db/leave";
 
 export const applyLeaveAction = async (
@@ -143,6 +144,93 @@ export const fetchAllLeavesAction = async (): Promise<
     return {
       success: false,
       message: error.message || "Error fetching leaves",
+    };
+  }
+};
+
+export const bulkDeleteLeavesAction = async (
+  ids: string[],
+): Promise<ActionResponse<string[]>> => {
+  if (!ids || ids.length === 0) {
+    return {
+      success: false,
+      message: "Leave IDs are required",
+    };
+  }
+
+  try {
+    const deletedIds = await bulkDeleteLeaves(ids);
+
+    revalidatePath("/profile/leaves");
+    revalidatePath("/admin/leaves");
+
+    return {
+      success: true,
+      data: deletedIds,
+      message: "Leaves deleted successfully",
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Error deleting leaves",
+    };
+  }
+};
+
+export const createLeaveAction = async (
+  data: Prisma.LeaveUncheckedCreateInput,
+): Promise<ActionResponse<any>> => {
+  if (!data.userId || !data.startDate || !data.endDate || !data.leaveType) {
+    return {
+      success: false,
+      message: "User, dates, and leave type are required",
+    };
+  }
+
+  try {
+    const createdLeave = await createLeave(data);
+
+    revalidatePath("/profile/leaves");
+    revalidatePath("/admin/leaves");
+
+    return {
+      success: true,
+      message: "Leave created successfully",
+      data: createdLeave,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Error creating leave",
+    };
+  }
+};
+
+export const deleteLeaveAction = async (
+  id: string,
+): Promise<ActionResponse<string>> => {
+  if (!id) {
+    return {
+      success: false,
+      message: "Leave ID is required",
+    };
+  }
+
+  try {
+    const leaveId = await deleteLeave(id);
+
+    revalidatePath("/profile/leaves");
+    revalidatePath("/admin/leaves");
+
+    return {
+      success: true,
+      data: leaveId,
+      message: "Leave deleted successfully",
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Error deleting leave",
     };
   }
 };

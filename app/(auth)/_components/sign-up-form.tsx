@@ -16,6 +16,8 @@ import { RegisterSchema } from "@/schemas";
 import { signUpAction } from "@/actions/sign-up";
 
 export const SignUpForm = ({ redirectTo }: { redirectTo?: string }) => {
+  // const redirectLink = redirectTo || "/sign-in";
+  const redirectLink = "/sign-in";
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
@@ -49,9 +51,9 @@ export const SignUpForm = ({ redirectTo }: { redirectTo?: string }) => {
 
     startTransition(async () => {
       try {
-        console.log("Redirect to:", redirectTo);
+        console.log("Redirect to:", redirectLink);
         const result = await signUpAction(data, {
-          redirectTo: redirectTo,
+          redirectTo: redirectLink,
         });
 
         if (!result.success && result.fieldErrors) {
@@ -70,7 +72,7 @@ export const SignUpForm = ({ redirectTo }: { redirectTo?: string }) => {
           setMessage(result.message);
           setValidationErrors({});
           form.reset();
-          if (redirectTo) router.push(redirectTo);
+          if (redirectLink) router.push(redirectLink);
         } else {
           setSuccess(false);
           setError(true);
