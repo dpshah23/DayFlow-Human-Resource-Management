@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id         String       @id @default(cuid())
+  role       Role         @default(EMPLOYEE)
+  profile    Profile?
+  leaves     Leave[]
+  attendance Attendance[]
+  createdAt  DateTime     @default(now())
+}
+
+model Profile {
+  id      String  @id @default(cuid())
+  userId  String  @unique
+  name    String
+  phone   String?
+  address String?
+  salary  Int?
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+model Attendance {
+  id     String           @id @default(cuid())
+  userId String
+  date   DateTime
+  status AttendanceStatus
+  user   User             @relation(fields: [userId], references: [id])
+}
+
+model Leave {
+  id     String      @id @default(cuid())
+  userId String
+  type   LeaveType
+  from   DateTime
+  to     DateTime
+  status LeaveStatus @default(PENDING)
+  reason String?
+  user   User        @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  HALF_DAY
+  LEAVE
+}
+
+enum LeaveType {
+  PAID
+  SICK
+  UNPAID
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
