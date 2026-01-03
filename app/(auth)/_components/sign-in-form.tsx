@@ -91,8 +91,12 @@ export const SignInForm = ({ redirectTo }: { redirectTo?: string }) => {
             // } else {
             router.push(result.redirectTo);
             // }
+          } else {
+            if (result.data?.role === "ADMIN") {
+              router.push("/admin/dashboard");
+            }
           }
-          router.refresh();
+          // router.refresh();
         } else {
           setError(true);
           setSuccess(false);
