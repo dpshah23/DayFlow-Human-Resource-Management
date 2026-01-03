@@ -6,6 +6,8 @@ import * as React from "react";
 import { HeroUIProvider } from "@heroui/system";
 import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { ToastProvider } from "@heroui/toast";
+import { X } from "lucide-react";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -25,6 +27,17 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 
   return (
     <HeroUIProvider navigate={router.push}>
+      <ToastProvider
+        placement="top-right"
+        toastProps={{
+          classNames: {
+            closeButton:
+              "opacity-100 absolute right-4 top-1/2 -translate-y-1/2",
+          },
+          timeout: 5000,
+          closeIcon: <X size={32} />,
+        }}
+      />
       <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
     </HeroUIProvider>
   );

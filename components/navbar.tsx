@@ -1,141 +1,103 @@
+"use client";
+
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
-  NavbarMenu,
   NavbarMenuToggle,
   NavbarBrand,
   NavbarItem,
-  NavbarMenuItem,
 } from "@heroui/navbar";
-import { Button } from "@heroui/button";
-import { Kbd } from "@heroui/kbd";
-import { Link } from "@heroui/link";
-import { Input } from "@heroui/input";
-import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
-import clsx from "clsx";
+import { usePathname } from "next/navigation";
+import { Sparkles } from "lucide-react";
+import { useState } from "react";
+
+import { AuthButtons } from "./auth-buttons";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  TwitterIcon,
-  GithubIcon,
-  DiscordIcon,
-  HeartFilledIcon,
-  SearchIcon,
-  Logo,
-} from "@/components/icons";
 
-export const Navbar = () => {
-  const searchInput = (
-    <Input
-      aria-label="Search"
-      classNames={{
-        inputWrapper: "bg-default-100",
-        input: "text-sm",
-      }}
-      endContent={
-        <Kbd className="hidden lg:inline-block" keys={["command"]}>
-          K
-        </Kbd>
-      }
-      labelPlacement="outside"
-      placeholder="Search..."
-      startContent={
-        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-      }
-      type="search"
-    />
-  );
+export const Navbar = ({
+  position = "sticky",
+}: {
+  position?: "static" | "sticky";
+}) => {
+  const path = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isActive = (href: string) => path === href;
 
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky">
+    <HeroUINavbar
+      className="border-b shadow-xs backdrop-blur-md bg-background/80 border-content2"
+      height="64px"
+      isMenuOpen={isMenuOpen}
+      maxWidth="2xl"
+      position={position}
+      onMenuOpenChange={setIsMenuOpen}
+    >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex justify-start items-center gap-1" href="/">
-            <Logo />
-            <p className="font-bold text-inherit">ACME</p>
+          <NextLink className="flex items-center justify-start gap-2" href="/">
+            {/* Modern Logo with Gradient Background */}
+            <div className="flex items-center justify-center w-8 h-8 transition-transform rounded-lg bg-gradient-to-r from-primary to-secondary hover:scale-105">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold text-foreground">
+              {siteConfig.name.includes("MAX") ? (
+                <>
+                  {siteConfig.name.replace("MAX", "")}
+                  <span className="text-primary">MAX</span>
+                </>
+              ) : (
+                siteConfig.name
+              )}
+            </span>
           </NextLink>
         </NavbarBrand>
-        <ul className="hidden lg:flex gap-4 justify-start ml-2">
-          {siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
-              <NextLink
-                className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
-                )}
-                color="foreground"
-                href={item.href}
-              >
-                {item.label}
-              </NextLink>
-            </NavbarItem>
-          ))}
-        </ul>
       </NavbarContent>
 
+      {/* Center Navigation - Desktop */}
+
+      {/* Right Side - Desktop */}
       <NavbarContent
-        className="hidden sm:flex basis-1/5 sm:basis-full"
+        className="hidden lg:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        <NavbarItem className="hidden sm:flex gap-2">
-          <Link isExternal aria-label="Twitter" href={siteConfig.links.twitter}>
-            <TwitterIcon className="text-default-500" />
-          </Link>
-          <Link isExternal aria-label="Discord" href={siteConfig.links.discord}>
-            <DiscordIcon className="text-default-500" />
-          </Link>
-          <Link isExternal aria-label="Github" href={siteConfig.links.github}>
-            <GithubIcon className="text-default-500" />
-          </Link>
+        <NavbarItem>
           <ThemeSwitch />
         </NavbarItem>
-        <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
-        <NavbarItem className="hidden md:flex">
-          <Button
-            isExternal
-            as={Link}
-            className="text-sm font-normal text-default-600 bg-default-100"
-            href={siteConfig.links.sponsor}
-            startContent={<HeartFilledIcon className="text-danger" />}
-            variant="flat"
-          >
-            Sponsor
-          </Button>
+        <NavbarItem className="hidden sm:flex">
+          <AuthButtons />
         </NavbarItem>
+        {/* CTA Button */}
+        {/* <NavbarItem className="hidden lg:flex">
+          <Button
+            as={NextLink}
+            className="font-semibold"
+            color="primary"
+            endContent={<ArrowRight className="w-4 h-4" />}
+            href="/contact"
+            size="sm"
+            variant="solid"
+          >
+            Get Started
+          </Button>
+        </NavbarItem> */}
       </NavbarContent>
 
-      <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <Link isExternal aria-label="Github" href={siteConfig.links.github}>
-          <GithubIcon className="text-default-500" />
-        </Link>
+      {/* Mobile Navigation Toggle */}
+      <NavbarContent className="pl-4 lg:hidden basis-1" justify="end">
         <ThemeSwitch />
-        <NavbarMenuToggle />
+        <NavbarItem className="hidden sm:flex lg:hidden">
+          <AuthButtons />
+        </NavbarItem>
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          className="transition-colors text-foreground hover:text-primary"
+        />
       </NavbarContent>
 
-      <NavbarMenu>
-        {searchInput}
-        <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                }
-                href="#"
-                size="lg"
-              >
-                {item.label}
-              </Link>
-            </NavbarMenuItem>
-          ))}
-        </div>
-      </NavbarMenu>
+      {/* Mobile Menu */}
     </HeroUINavbar>
   );
 };
