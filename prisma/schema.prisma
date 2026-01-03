@@ -53,7 +53,7 @@ model Attendance {
   date   DateTime
   status AttendanceStatus
   user   User             @relation(fields: [userId], references: [id])
-  @@unique([userId, date])
+  @@unique([userId, date], name: "userId_date")
 }
 
 model Leave {

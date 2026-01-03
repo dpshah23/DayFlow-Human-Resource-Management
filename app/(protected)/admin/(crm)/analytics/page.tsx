@@ -362,9 +362,11 @@ const AnalyticsPage = () => {
                   data={leaveTypeData}
                   dataKey="value"
                   fill="#8884d8"
-                  label={({ name, percent }) =>
-                    `${name}: ${(percent * 100).toFixed(0)}%`
-                  }
+                  label={({ name, percent }) => {
+                    return percent
+                      ? `${name}: ${(percent * 100).toFixed(0)}%`
+                      : "";
+                  }}
                   labelLine={false}
                   outerRadius={100}
                 >
